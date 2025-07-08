@@ -2,7 +2,7 @@ name: Auto Add Mario Level Keren
 
 on:
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '*/30 * * * *'  # setiap 30 menit (UTC)
   workflow_dispatch:
 
 jobs:
@@ -79,5 +79,5 @@ jobs:
       - name: Commit and push if changed
         run: |
           git add levels/
-          git commit -m "Auto add new level $name for $(date +%Y-%m-%d-%H:%M) [skip ci]" || echo "No changes to commit"
+          git commit -m "Add Level: $name" || echo "No changes to commit"
           git push
