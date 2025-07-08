@@ -2,7 +2,7 @@ name: Auto Add Mario Level Keren
 
 on:
   schedule:
-    - cron: '*/30 * * * *'  # setiap 30 menit (UTC)
+    - cron: '*/30 * * * *'
   workflow_dispatch:
 
 jobs:
@@ -41,11 +41,30 @@ jobs:
             "MercuryX" "OrionX" "ViperX" "LynxX" "WolfX" "RaptorX" "JaguarX" "StormX"
             "AstroX" "GalaxyX"
           )
-          index=$(( ($(date +%s) / 1800) % ${#names[@]} ))
+
+          mkdir -p levels
+
+          # Ambil nama terakhir yang dipakai dari file terbaru
+          last_name=""
+          if ls levels/level-*-*.txt 1> /dev/null 2>&1; then
+            last_file=$(ls levels/level-*-*.txt | sort | tail -n 1)
+            last_name=$(basename "$last_file" | sed -E 's/level-[0-9]{8}-[0-9]{4}-(.*)\.txt/\1/')
+          fi
+
+          # Cari index berikutnya
+          index=0
+          if [ -n "$last_name" ]; then
+            for i in "${!names[@]}"; do
+              if [[ "${names[$i]}" == "$last_name" ]]; then
+                index=$(( (i + 1) % ${#names[@]} ))
+                break
+              fi
+            done
+          fi
+
           name=${names[$index]}
 
           LEVEL_FILE="levels/level-$(date +%Y%m%d-%H%M)-$name.txt"
-          mkdir -p levels
           echo "Level $name generated on $(date)" > "$LEVEL_FILE"
           echo "#######" >> "$LEVEL_FILE"
           echo "#     #" >> "$LEVEL_FILE"
