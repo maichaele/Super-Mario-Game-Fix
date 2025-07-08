@@ -1,0 +1,64 @@
+name: Auto Add Mario Level Keren
+
+on:
+  schedule:
+    - cron: '*/30 * * * *'  # setiap 30 menit (UTC)
+  workflow_dispatch:
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Add new level dengan nama keren
+        run: |
+          names=(
+            "Vortex" "Nebula" "Phoenix" "Falcon" "Titan" "Shadow" "Blaze" "Nova" "Quantum" "Specter"
+            "Reactor" "Stellar" "Inferno" "Cosmos" "Zephyr" "Obsidian" "Glacier" "Thunder" "Matrix"
+            "Aurora" "Samurai" "Ninja" "Ronin" "Valkyrie" "Oracle" "Sonic" "Ranger" "Drift"
+            "Mirage" "Cipher" "Echo" "Titanium" "Genesis" "Saber" "Onyx" "Blizzard" "Venom"
+            "Storm" "Astro" "Galaxy" "Eclipse" "Magma" "Turbo" "Rogue" "Elemental" "Surge"
+            "Radiant" "Zenith" "Prime" "Sentinel" "Golem" "Mystic" "Frost" "Legend" "Alpha" "Omega"
+            "Delta" "Sigma" "Aegis" "Hyperion" "Atlas" "Kraken" "Hydra" "Apollo" "Mercury" "Orion"
+            "Viper" "Saber" "Lynx" "Wolf" "Draco" "Raptor" "Jaguar" "NovaPrime" "Blade" "Striker"
+            "Banshee" "Tempest" "Chaos" "Spectra" "Pulse" "Halo" "Bolt" "Scythe" "Arcane" "Rune"
+            "Void" "Stealth" "Rift" "Havoc" "Monarch" "Paladin" "Guardian" "Maverick"
+            "Vigil" "Phantom" "Glitch" "Revenant" "Zero" "Nemesis" "Spectral" "Vanguard"
+            "Sphinx" "Ghost" "Reaper" "Nomad" "Gravity" "Asteroid" "Comet" "Meteor"
+            "Solaris" "Lunar" "Celestial" "Pulsefire" "Razor" "Edge" "Horizon" "Spark" "Ignite"
+            "Volt" "Stratos" "Cosmic" "Nebula-X" "Cyber" "Fusion" "QuantumX" "Spectron"
+            "Jetstream" "Blitz" "NovaX" "Sentrix" "Astra" "Galactix" "Pulsar" "Radiance"
+            "OracleX" "Turbine" "Helix" "Paradox" "EclipseX" "Magnetar" "Stardust" "Solar"
+            "Lumin" "Spectron" "Axion" "Nebulon" "Vector" "Flux" "Echo-X" "Polar" "MirageX"
+            "Blade-X" "Pulse-X" "Hypernova" "Celestia" "Titania" "Solstice" "Equinox" "BlizzardX"
+            "Ignis" "Seraph" "Vesper" "Rune-X" "Cyborg" "Exodus" "Dynamo" "Axiom" "Javelin"
+            "Orbit" "Halo-X" "Rift-X" "Infinity" "TempestX" "Aether" "Oblivion" "StellarX"
+            "Quantum-Z" "AuroraX" "PrimeX" "SpectraX" "GenesisX" "VanguardX" "SpecterX"
+            "ZenithX" "RadiantX" "DracoX" "ThunderX" "FrostX" "BlazeX" "OmegaX" "AlphaX"
+            "DeltaX" "SigmaX" "AegisX" "HyperionX" "AtlasX" "KrakenX" "HydraX" "ApolloX"
+            "MercuryX" "OrionX" "ViperX" "LynxX" "WolfX" "RaptorX" "JaguarX" "StormX"
+            "AstroX" "GalaxyX"
+          )
+          index=$(( ($(date +%s) / 1800) % ${#names[@]} ))
+          name=${names[$index]}
+
+          LEVEL_FILE="levels/level-$(date +%Y%m%d-%H%M)-$name.txt"
+          mkdir -p levels
+          echo "Level $name generated on $(date)" > "$LEVEL_FILE"
+          echo "#######" >> "$LEVEL_FILE"
+          echo "#     #" >> "$LEVEL_FILE"
+          echo "#  M  #" >> "$LEVEL_FILE"
+          echo "#######" >> "$LEVEL_FILE"
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push if changed
+        run: |
+          git add levels/
+          git commit -m "Auto add new level $name for $(date +%Y-%m-%d-%H:%M) [skip ci]" || echo "No changes to commit"
+          git push
